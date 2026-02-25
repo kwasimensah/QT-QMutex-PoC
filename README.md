@@ -21,7 +21,7 @@ I think unlockInternal can pass the lock to the waiter without doing any acquire
 
 # Latest Status
 
-Making sure to run this with `-DFEATURE_santize_thread=ON` I know get the stack trace below. It seem [this line](https://github.com/qt/qtbase/blob/31729a29d0762f7dc98f3dfab67e84325f9925e0/src/corelib/kernel/qcoreapplication.cpp#L1675) is racing to write the `data-canWait` for the reciever's thread data.
+Making sure to run this with `-DFEATURE_santize_thread=ON` I now get the stack trace below. It seems [this line](https://github.com/qt/qtbase/blob/31729a29d0762f7dc98f3dfab67e84325f9925e0/src/corelib/kernel/qcoreapplication.cpp#L1675) is racing to write the `data-canWait` for the reciever's thread data.
 
 ```
 WARNING: ThreadSanitizer: data race (pid=73403)
