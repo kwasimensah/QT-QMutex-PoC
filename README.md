@@ -1,4 +1,6 @@
 # Intro
+EDIT: this is actually a TSAN bug per TSan does not support mach semaphores (on macOS) · Issue #1384 · google/sanitizers  i.e. they don’t know how to deal with mach semaphores and they do seem to introduce the right barriers. I’ll close for now
+
 This repo is for https://qt-project.atlassian.net/browse/QTBUG-144362 to try and show that there's an issue with QMutex.
 
 
