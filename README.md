@@ -7,7 +7,7 @@ You can run `run.sh` to build and run this project with tsan on and without the 
 A couple notes:
 
 * This uses QT 6.5.5 which is not qtbase head but the closest public version to what's being used internally
-* I'm on a Mac which does not have futexs because it does not have [this pr](https://github.com/qt/qtbase/commit/d2368cde70062bbaa9db463d76cd135dccb55e23) yet.
+* I'm on a Mac which does not have futexs in 6.5.5 because it does not have [this pr](https://github.com/qt/qtbase/commit/d2368cde70062bbaa9db463d76cd135dccb55e23) yet.
 
 
 # Latest Status
@@ -63,4 +63,39 @@ WARNING: ThreadSanitizer: data race (pid=73403)
     #4 main main.cpp:30 (hello_world_app:arm64+0x100003bc0)
 
 SUMMARY: ThreadSanitizer: data race qcoreapplication.cpp:1675 in QCoreApplication::postEvent(QObject*, QEvent*, int)
+```
+
+# qtbase diff
+
+The only modifications made to qtbase are to turn off the TSAN surpressions
+
+```
+--- a/src/corelib/thread/qtsan_impl.h
++++ b/src/corelib/thread/qtsan_impl.h
+@@ -35,22 +35,22 @@ inline void futexRelease(void *addr, void *addr2 = nullptr)
+ 
+ inline void mutexPreLock(void *addr, unsigned flags)
+ {
+-    ::__tsan_mutex_pre_lock(addr, flags);
++    //::__tsan_mutex_pre_lock(addr, flags);
+ }
+ 
+ inline void mutexPostLock(void *addr, unsigned flags, int recursion)
+ {
+-    ::__tsan_mutex_post_lock(addr, flags, recursion);
++    //::__tsan_mutex_post_lock(addr, flags, recursion);
+ }
+ 
+ inline void mutexPreUnlock(void *addr, unsigned flags)
+ {
+-    ::__tsan_mutex_pre_unlock(addr, flags);
++    //::__tsan_mutex_pre_unlock(addr, flags);
+ }
+ 
+ inline void mutexPostUnlock(void *addr, unsigned flags)
+ {
+-    ::__tsan_mutex_post_unlock(addr, flags);
++    //::__tsan_mutex_post_unlock(addr, flags);
+ }
+
 ```
