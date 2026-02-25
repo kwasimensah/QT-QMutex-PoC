@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
     QCoreApplication app(argc, argv);
     MyObject objectOnThread;
     std::vector<std::thread> workers;
-    for(int i = 0; i < 4; ++i) {
+    for(int i = 0; i < 2; ++i) {
       workers.emplace_back(std::thread([&]{
         while(1) {
           
