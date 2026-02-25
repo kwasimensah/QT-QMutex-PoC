@@ -1,0 +1,26 @@
+cmake_minimum_required(VERSION 3.12)
+project(HelloWorldProject LANGUAGES CXX)
+
+
+add_subdirectory(qtbase)
+
+# A robust way to enable sanitizers is through specific options
+# If using a modern CMake version (e.g., 3.12+), you can use the
+# "sanitizers-cmake" pattern by defining a SANITIZE_THREAD option
+option(SANITIZE_THREAD "Enable ThreadSanitizer" ON)
+
+if(SANITIZE_THREAD)
+    # The required flags might differ slightly between compilers (Clang/GCC)
+    # This approach is generally compatible with recent compilers.
+    add_compile_options(-fsanitize=thread)
+    string(APPEND CMAKE_EXE_LINKER_FLAGS "-fsanitize=thread")
+endif()
+
+
+
+
+set(SOURCES  main.cpp)
+qt_wrap_cpp(SOURCES main.cpp)
+#qt_add_executable(mhello_world_appapp ${SOURCES})
+
+qt_add_executable(hello_world_app ${SOURCES})
