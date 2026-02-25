@@ -8,7 +8,16 @@ A couple notes:
 
 * This uses QT 6.5.5 which is not qtbase head but the closest public version to what's being used internally
 * I'm on a Mac which does not have futexs in 6.5.5 because it does not have [this pr](https://github.com/qt/qtbase/commit/d2368cde70062bbaa9db463d76cd135dccb55e23) yet.
+    * Even at HEAD, using `-DFEATURE_appstore_compliant` turns off futex support because it relies on private Apple APIs and I can repro this issue there.
 
+
+# Hypothesis
+
+In the case where there's contention and [unlockInternal calls wakeUp to try and pass the lock directly to a waiter](https://github.com/qt/qtbase/blob/ffe3f3565e8b9a5c7e0ea6b33dc7993d3902077e/src/corelib/thread/qmutex.cpp#L799), are there any read/write barriers that would require all writes to be committed before the handoff? This path seems to have a lot of relaxed/release loads and stores.
+
+the [d->wait condition in lockInternal](https://github.com/qt/qtbase/blob/ffe3f3565e8b9a5c7e0ea6b33dc7993d3902077e/src/corelib/thread/qmutex.cpp#L736) also does all relaxed operations before returning true. 
+
+I think unlockInternal can pass the lock to the waiter without doing any acquire loads if the waiter is already at the d->wait check in lockInternal
 
 # Latest Status
 
